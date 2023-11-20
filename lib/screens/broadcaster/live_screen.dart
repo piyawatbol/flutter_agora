@@ -3,6 +3,8 @@ import 'package:agora_token_service/agora_token_service.dart';
 import 'package:agora_uikit/agora_uikit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_agora_app/configs/appId.dart';
+import 'package:flutter_agora_app/controllers/channel/channel_controller.dart';
+import 'package:get/get.dart';
 
 class LiveScreen extends StatefulWidget {
   final int uid;
@@ -19,6 +21,7 @@ class _LiveScreenState extends State<LiveScreen> {
   bool _localUserJoined = false;
   int visitors = 0;
   late RtcEngine _engine;
+  ChannelController channelController = Get.put(ChannelController());
 
   @override
   void initState() {
@@ -106,6 +109,7 @@ class _LiveScreenState extends State<LiveScreen> {
   Future<void> _dispose() async {
     await _engine.leaveChannel();
     await _engine.release();
+    channelController.deleteChannel();
   }
 
   @override
@@ -116,9 +120,6 @@ class _LiveScreenState extends State<LiveScreen> {
       ),
       body: Stack(
         children: [
-          // Center(
-          //   child: _remoteVideo(),
-          // ),
           Container(
             child: Center(
               child: _localUserJoined
@@ -133,51 +134,9 @@ class _LiveScreenState extends State<LiveScreen> {
           ),
           AgoraVideoButtons(
             client: client,
-            // disableVideoButtonChild: ElevatedButton(
-            //   onPressed: () {
-            //     // ควบคุมการเปิด/ปิดกล้องของผู้ถ่ายภาพ
-            //     if (enableCamera == true) {
-            //       _engine.enableLocalVideo(false);
-            //       _engine.muteLocalVideoStream(true);
-            //       setState(() {
-            //         enableCamera = false;
-            //       });
-            //     } else {
-            //       _engine.enableLocalVideo(true);
-            //       _engine.muteLocalVideoStream(false);
-            //       setState(() {
-            //         enableCamera = true;
-            //       });
-            //     }
-            //   },
-            // ),
           ),
-          // Positioned(
-          //   right: 10,
-          //   top: 10,
-          //   child: Text(
-          //     "${visitors}",
-          //   ),
-          // ),
         ],
       ),
     );
   }
-
-  // Widget _remoteVideo() {
-  //   if (_remoteUid != null) {
-  //     return AgoraVideoView(
-  //       controller: VideoViewController.remote(
-  //         rtcEngine: _engine,
-  //         canvas: VideoCanvas(uid: _remoteUid),
-  //         connection: const RtcConnection(channelId: channel),
-  //       ),
-  //     );
-  //   } else {
-  //     return const Text(
-  //       'Please wait for remote user to join',
-  //       textAlign: TextAlign.center,
-  //     );
-  //   }
-  // }
 }

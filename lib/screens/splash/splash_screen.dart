@@ -28,7 +28,7 @@ class SplachScreen extends StatelessWidget {
             ),
             splashIconSize: 150,
             backgroundColor: Colors.white,
-            duration: 2000,
+            duration: 1000,
             splashTransition: SplashTransition.fadeTransition,
             pageTransitionType: PageTransitionType.fade,
             nextScreen: controller.token == null || controller.token == ""

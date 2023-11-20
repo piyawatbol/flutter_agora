@@ -3,6 +3,7 @@ import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import 'package:agora_token_service/agora_token_service.dart';
 // import 'package:agora_uikit/agora_uikit.dart';
 import 'package:flutter_agora_app/configs/appId.dart';
+import 'package:flutter_agora_app/widgets/text/auto_text.dart';
 
 class ViewerScreen extends StatefulWidget {
   final int uid;
@@ -25,7 +26,6 @@ class _ViewerScreenState extends State<ViewerScreen> {
   }
 
   Future<void> initAgora() async {
-    // await [Permission.microphone, Permission.camera].request();
     _engine = createAgoraRtcEngine();
     await _engine.initialize(const RtcEngineContext(
       appId: appId,
@@ -95,7 +95,7 @@ class _ViewerScreenState extends State<ViewerScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Agora Video Call - Participant'),
+        title: AutoText('Live'),
       ),
       body: Stack(
         children: [

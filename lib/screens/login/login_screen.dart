@@ -18,6 +18,10 @@ class LoginScreen extends StatelessWidget {
         FocusScope.of(context).requestFocus(FocusNode());
       },
       child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Color(0xfff9f9f9),
+          elevation: 0,
+        ),
         body: Container(
             width: size.width,
             height: size.height,
@@ -28,53 +32,56 @@ class LoginScreen extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 30),
                   child: Stack(
                     children: [
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          AutoText(
-                            "Login",
-                            fontSize: 45,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          TextFieldCustom(
-                            title: "Email",
-                            controller: controller.email,
-                            padding: EdgeInsets.only(top: 60, bottom: 15),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          TextFieldCustom(
-                            title: "Password",
-                            controller: controller.password,
-                            padding: EdgeInsets.only(bottom: 20),
-                            borderRadius: BorderRadius.circular(10),
-                            hidePass: controller.hidePass,
-                            suffixIcon: IconButton(
-                              onPressed: () {
-                                controller.toggleHidePass();
-                              },
-                              icon: controller.hidePass
-                                  ? Icon(Icons.visibility, color: Colors.black)
-                                  : Icon(Icons.visibility_off,
-                                      color: Colors.black),
+                      SingleChildScrollView(
+                        child: Column(
+                          children: [
+                            SizedBox(height: size.height * 0.1),
+                            AutoText(
+                              "Login",
+                              fontSize: 45,
+                              fontWeight: FontWeight.bold,
                             ),
-                          ),
-                          ButtonCustom(
-                            "login",
-                            width: size.width,
-                            height: 50,
-                            onTap: () {
-                              controller.login();
-                            },
-                            borderRadius: 10,
-                            padding: EdgeInsets.only(bottom: 15),
-                          ),
-                          GestureDetector(
+                            TextFieldCustom(
+                              title: "Email",
+                              controller: controller.email,
+                              padding: EdgeInsets.only(top: 60, bottom: 15),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            TextFieldCustom(
+                              title: "Password",
+                              controller: controller.password,
+                              padding: EdgeInsets.only(bottom: 20),
+                              borderRadius: BorderRadius.circular(10),
+                              hidePass: controller.hidePass,
+                              suffixIcon: IconButton(
+                                onPressed: () {
+                                  controller.toggleHidePass();
+                                },
+                                icon: controller.hidePass
+                                    ? Icon(Icons.visibility_off,
+                                        color: Colors.black)
+                                    : Icon(Icons.visibility,
+                                        color: Colors.black),
+                              ),
+                            ),
+                            ButtonCustom(
+                              "login",
+                              width: size.width,
+                              height: 50,
                               onTap: () {
-                                Get.toNamed(AppRoutes.register);
+                                controller.login();
                               },
-                              child: AutoText("register",
-                                  color: Colors.grey.shade500))
-                        ],
+                              borderRadius: 10,
+                              padding: EdgeInsets.only(bottom: 15),
+                            ),
+                            GestureDetector(
+                                onTap: () {
+                                  Get.toNamed(AppRoutes.register);
+                                },
+                                child: AutoText("register",
+                                    color: Colors.grey.shade500))
+                          ],
+                        ),
                       ),
                       LoadingPage(statusLoading: controller.statusLoading)
                     ],

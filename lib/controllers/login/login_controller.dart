@@ -28,6 +28,7 @@ class LoginController extends GetxController {
       "login_type": "email_password"
     };
     final response = await LoginApi.login(body);
+
     if (response['message'] == "Success") {
       LogShow.showLog(response);
       SharedPreferences preferences = await SharedPreferences.getInstance();

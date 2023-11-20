@@ -42,12 +42,10 @@ class HttpRequest {
         data: body,
         options: Options(headers: headers),
       );
-
       return responseStatus(response, path);
     } on DioException catch (e) {
-      log(e.message.toString());
       log(e.toString());
-      return responseStatus(e.response, path);
+      return responseError();
     }
   }
 
@@ -65,9 +63,28 @@ class HttpRequest {
       );
       return responseStatus(response, path);
     } on DioException catch (e) {
-      log(e.message.toString());
       log(e.toString());
-      return responseStatus(e.response, path);
+      return responseError();
+    }
+  }
+
+
+  static Future delete(
+    String path, {
+    Map<String, dynamic>? body,
+    bool withAccessToken = false,
+  }) async {
+    final headers = await buildHeaders(withAccessToken: withAccessToken);
+    try {
+      final response = await dio.delete(
+        path,
+        data: body,
+        options: Options(headers: headers),
+      );
+      return responseStatus(response, path);
+    } on DioException catch (e) {
+      log(e.toString());
+      return responseError();
     }
   }
 
@@ -88,7 +105,7 @@ class HttpRequest {
     } on DioException catch (e) {
       log("error : ${e.message}");
       log(e.toString());
-      return responseStatus(e.response, path);
+      return responseError();
     }
   }
 
@@ -121,8 +138,23 @@ class HttpRequest {
           "data": response.data
         };
         return massage;
+      case 500:
+        ToastCustom("${response.data}", Colors.red);
+        Map<String, dynamic> massage = {
+          "message": "SeverError",
+          "data": response.data
+        };
+        return massage;
       default:
         throw Exception('Failed to load province');
     }
+  }
+
+  static Future<Map<String, dynamic>> responseError() async {
+    Map<String, dynamic> massage = {
+      "message": "SeverError",
+    };
+    ToastCustom("SeverError", Colors.red);
+    return massage;
   }
 }

@@ -30,6 +30,9 @@
 		<!-- camera -->
 		<key>NSCameraUsageDescription</key>
 		<string>We need access to your camera for video and photo capture.</string>
+		<!-- photo -->
+		<key>NSPhotoLibraryUsageDescription</key>
+		<string>Please grant photo gallery access</string>
 		<key>UILaunchStoryboardName</key>
 		<string>LaunchScreen</string>
 		<key>UIMainStoryboardFile</key>
