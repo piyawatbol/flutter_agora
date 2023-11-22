@@ -5,7 +5,10 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'routes/routes.dart';
 
-void main() => runApp(MyApp());
+void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  runApp(const MyApp());
+}
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});

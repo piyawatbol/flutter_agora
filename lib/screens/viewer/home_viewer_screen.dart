@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_agora_app/configs/ipcon.dart';
-import 'package:flutter_agora_app/controllers/channel/channel_controller.dart';
+import 'package:flutter_agora_app/controllers/live/live_controller.dart';
 import 'package:flutter_agora_app/models/users/userData.dart';
 import 'package:flutter_agora_app/screens/viewer/viewer_screen.dart';
 import 'package:get/get.dart';
@@ -22,6 +22,7 @@ class HomeViewerScreen extends StatelessWidget {
         FocusScope.of(context).requestFocus(FocusNode());
       },
       child: Scaffold(
+          backgroundColor: Colors.white,
           drawer: SafeArea(
             bottom: false,
             child: DrawerHome(),
@@ -30,8 +31,8 @@ class HomeViewerScreen extends StatelessWidget {
             title: AutoText("Live"),
             backgroundColor: Colors.white,
           ),
-          body: GetBuilder<ChannelController>(
-            init: ChannelController(),
+          body: GetBuilder<LiveController>(
+            init: LiveController(),
             builder: (controller) {
               return RefreshIndicator(
                 onRefresh: () {
@@ -52,7 +53,7 @@ class HomeViewerScreen extends StatelessWidget {
     );
   }
 
-  Widget buildChannel(Size size, ChannelController controller) {
+  Widget buildChannel(Size size, LiveController controller) {
     return SizedBox(
       child: ListView.builder(
         shrinkWrap: true,

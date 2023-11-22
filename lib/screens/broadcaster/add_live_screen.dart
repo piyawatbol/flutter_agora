@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter_agora_app/controllers/channel/channel_controller.dart';
+import 'package:flutter_agora_app/controllers/live/live_controller.dart';
 import 'package:flutter_agora_app/widgets/button/button_custom.dart';
 import 'package:flutter_agora_app/widgets/loading/loading.dart';
 import 'package:flutter_agora_app/widgets/textfeild/textfeild_custom.dart';
@@ -23,38 +23,15 @@ class AddLiveScreen extends StatelessWidget {
           padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
           width: size.width,
           height: size.height,
-          child: GetBuilder<ChannelController>(
-            init: ChannelController(),
+          child: GetBuilder<LiveController>(
+            init: LiveController(),
             builder: (controller) {
               return Stack(
                 children: [
                   SingleChildScrollView(
                     child: Column(
                       children: [
-                        GestureDetector(
-                          onTap: () {
-                            controller.pickImage();
-                          },
-                          child: Container(
-                            width: size.width,
-                            height: size.height * 0.3,
-                            decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(10),
-                                border: Border.all(
-                                    color: Colors.black.withOpacity(0.5))),
-                            child: controller.pickedFile != null
-                                ? Image.file(
-                                    File(controller.pickedFile!.path),
-                                    fit: BoxFit.cover,
-                                  )
-                                : Icon(
-                                    Icons.photo,
-                                    color: Colors.grey.shade400,
-                                    size: 40,
-                                  ),
-                          ),
-                        ),
+                        buildPickImg(controller, size),
                         TextFieldCustom(
                           controller: controller.channelName,
                           title: "ChannelName",
@@ -82,5 +59,32 @@ class AddLiveScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Widget buildPickImg(LiveController controller, Size size) {
+    return GestureDetector(
+                        onTap: () {
+                          controller.pickImage();
+                        },
+                        child: Container(
+                          width: size.width,
+                          height: size.height * 0.3,
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(
+                                  color: Colors.black.withOpacity(0.5))),
+                          child: controller.pickedFile != null
+                              ? Image.file(
+                                  File(controller.pickedFile!.path),
+                                  fit: BoxFit.cover,
+                                )
+                              : Icon(
+                                  Icons.photo,
+                                  color: Colors.grey.shade400,
+                                  size: 40,
+                                ),
+                        ),
+                      );
   }
 }

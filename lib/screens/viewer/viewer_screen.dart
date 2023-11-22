@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
-import 'package:agora_token_service/agora_token_service.dart';
-// import 'package:agora_uikit/agora_uikit.dart';
-import 'package:flutter_agora_app/configs/appId.dart';
+import 'package:flutter_agora_app/controllers/viewer/viewer_controller.dart';
 import 'package:flutter_agora_app/widgets/text/auto_text.dart';
+import 'package:flutter_agora_app/widgets/textfeild/textfeild_custom.dart';
+import 'package:get/get.dart';
 
 class ViewerScreen extends StatefulWidget {
   final int uid;
@@ -15,112 +15,179 @@ class ViewerScreen extends StatefulWidget {
 }
 
 class _ViewerScreenState extends State<ViewerScreen> {
-  bool enableCamera = true;
-  int? _remoteUid;
-  late RtcEngine _engine;
+  ViewerController viewerController = Get.put(ViewerController());
 
   @override
   void initState() {
     super.initState();
-    initAgora();
-  }
-
-  Future<void> initAgora() async {
-    _engine = createAgoraRtcEngine();
-    await _engine.initialize(const RtcEngineContext(
-      appId: appId,
-      channelProfile: ChannelProfileType.channelProfileLiveBroadcasting,
-    ));
-    _engine.registerEventHandler(
-      RtcEngineEventHandler(
-        onJoinChannelSuccess: (RtcConnection connection, int elapsed) {
-          debugPrint("local user ${connection.localUid} joined");
-        },
-        onUserJoined: (RtcConnection connection, int remoteUid, int elapsed) {
-          debugPrint("remote user $remoteUid joined");
-          setState(() {
-            _remoteUid = remoteUid;
-          });
-        },
-        onUserOffline: (RtcConnection connection, int remoteUid,
-            UserOfflineReasonType reason) {
-          debugPrint("remote user $remoteUid left channel");
-          setState(() {
-            _remoteUid = null;
-          });
-        },
-      ),
-    );
-
-    await _engine.setClientRole(role: ClientRoleType.clientRoleAudience);
-    await _engine.enableVideo();
-    await _engine.startPreview();
-
-    final uid = '${widget.uid}';
-    final role = RtcRole.subscriber;
-
-    final expirationInSeconds = 3600;
-    final currentTimestamp = DateTime.now().millisecondsSinceEpoch ~/ 1000;
-    final expireTimestamp = currentTimestamp + expirationInSeconds;
-
-    final token = RtcTokenBuilder.build(
-      appId: appId,
-      appCertificate: appCertificate,
-      channelName: widget.channel,
-      uid: uid,
-      role: role,
-      expireTimestamp: expireTimestamp,
-    );
-
-    await _engine.joinChannel(
-      token: token,
-      channelId: widget.channel,
-      uid: widget.uid,
-      options: const ChannelMediaOptions(),
-    );
+    viewerController.initAgora(widget.channel);
   }
 
   @override
   void dispose() {
     super.dispose();
-    _dispose();
-  }
-
-  Future<void> _dispose() async {
-    await _engine.leaveChannel();
-    await _engine.release();
+    viewerController.OnDispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: AutoText('Live'),
-      ),
-      body: Stack(
-        children: [
-          Center(
-            child: _remoteVideo(),
+    var size = MediaQuery.of(context).size;
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).requestFocus(FocusNode());
+      },
+      child: Scaffold(
+        body: Container(
+          width: size.width,
+          height: size.height,
+          child: GetBuilder<ViewerController>(
+            init: ViewerController(),
+            builder: (controller) {
+              return Stack(
+                children: [
+                  if (controller.remoteUserid != null) ...{
+                    AutoText("${controller.remoteUserid}"),
+                    AgoraVideoView(
+                      controller: VideoViewController.remote(
+                        rtcEngine: controller.engine,
+                        canvas: VideoCanvas(uid: controller.remoteUserid),
+                        connection: RtcConnection(channelId: widget.channel),
+                      ),
+                    )
+                  } else ...{
+                    Center(
+                      child: AutoText(
+                        'No live stream available',
+                        textAlign: TextAlign.center,
+                      ),
+                    )
+                  },
+                  BuildChat(size),
+                  buildTextfeild(),
+                  buildAppBar()
+                ],
+              );
+            },
           ),
-        ],
+        ),
       ),
     );
   }
 
-  Widget _remoteVideo() {
-    if (_remoteUid != null) {
-      return AgoraVideoView(
-        controller: VideoViewController.remote(
-          rtcEngine: _engine,
-          canvas: VideoCanvas(uid: _remoteUid),
-          connection: RtcConnection(channelId: widget.channel),
+  Widget BuildChat(Size size) {
+    return Positioned(
+      bottom: size.height * 0.09,
+      child: Container(
+          padding: EdgeInsets.all(10),
+          height: size.height * 0.4,
+          width: size.width,
+          // color: Colors.red,
+          child: ListView.builder(
+            itemCount: 20,
+            itemBuilder: (BuildContext context, int index) {
+              return Container(
+                padding: EdgeInsets.symmetric(vertical: 10),
+                child: Row(
+                  children: [
+                    CircleAvatar(
+                      radius: 25,
+                    ),
+                    SizedBox(width: 10),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        AutoText(
+                          "pyayut chanosha",
+                          fontWeight: FontWeight.w500,
+                        ),
+                        AutoText("hello", color: Colors.grey.shade800),
+                      ],
+                    )
+                  ],
+                ),
+              );
+            },
+          )),
+    );
+  }
+
+  Widget buildTextfeild() {
+    return Positioned(
+        bottom: 25,
+        right: 0,
+        left: 0,
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 20),
+          child: TextField(
+            cursorHeight: 15,
+            decoration: InputDecoration(
+                contentPadding: EdgeInsets.only(left: 20),
+                filled: true,
+                fillColor: Colors.white,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                  borderSide: BorderSide(
+                    color: Colors.grey.shade400,
+                    width: 2,
+                  ),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                  borderSide: BorderSide(
+                    color: Colors.grey.shade500,
+                    width: 2,
+                  ),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                  borderSide: BorderSide(
+                    color: Colors.grey.shade400,
+                    width: 2,
+                  ),
+                ),
+                hintText: 'Enten Comment',
+                hintStyle: TextStyle(fontSize: 14),
+                suffixIcon: Icon(Icons.send)),
+          ),
+        ));
+  }
+
+  Widget buildAppBar() {
+    return SafeArea(
+        child: GestureDetector(
+      onTap: () {
+        Get.back();
+      },
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Container(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Icon(
+                Icons.arrow_back_ios_new_rounded,
+                size: 30,
+              ),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20)),
+                child: Row(
+                  children: [
+                    AutoText("Live"),
+                    SizedBox(width: 8),
+                    CircleAvatar(
+                      radius: 5,
+                      backgroundColor: Colors.red,
+                    ),
+                  ],
+                ),
+              )
+            ],
+          ),
         ),
-      );
-    } else {
-      return const Text(
-        'No live stream available',
-        textAlign: TextAlign.center,
-      );
-    }
+      ),
+    ));
   }
 }
