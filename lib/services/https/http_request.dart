@@ -1,6 +1,8 @@
 import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_agora_app/routes/routes.dart';
+import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../widgets/toast/toast_custom.dart';
@@ -45,7 +47,7 @@ class HttpRequest {
       return responseStatus(response, path);
     } on DioException catch (e) {
       log(e.toString());
-      return responseError();
+      return responseError(e.response);
     }
   }
 
@@ -64,10 +66,9 @@ class HttpRequest {
       return responseStatus(response, path);
     } on DioException catch (e) {
       log(e.toString());
-      return responseError();
+      return responseError(e.response);
     }
   }
-
 
   static Future delete(
     String path, {
@@ -84,7 +85,7 @@ class HttpRequest {
       return responseStatus(response, path);
     } on DioException catch (e) {
       log(e.toString());
-      return responseError();
+      return responseError(e.response);
     }
   }
 
@@ -105,7 +106,7 @@ class HttpRequest {
     } on DioException catch (e) {
       log("error : ${e.message}");
       log(e.toString());
-      return responseError();
+      return responseError(e.response);
     }
   }
 
@@ -144,17 +145,32 @@ class HttpRequest {
           "message": "SeverError",
           "data": response.data
         };
+
         return massage;
       default:
         throw Exception('Failed to load province');
     }
   }
 
-  static Future<Map<String, dynamic>> responseError() async {
-    Map<String, dynamic> massage = {
-      "message": "SeverError",
-    };
-    ToastCustom("SeverError", Colors.red);
-    return massage;
+  static Future<Map<String, dynamic>> responseError(response) async {
+    switch (response.statusCode) {
+      case 403:
+        ToastCustom("Invalid Token", Colors.red);
+        Map<String, dynamic> message = {
+          "message": "Invalid Token",
+        };
+        Get.offAllNamed(AppRoutes.login);
+        return message;
+
+      case 500:
+        Map<String, dynamic> message = {
+          "message": "SeverError",
+        };
+        ToastCustom("SeverError", Colors.red);
+        Get.offAllNamed(AppRoutes.login);
+        return message;
+      default:
+        throw Exception('Failed to load province');
+    }
   }
 }

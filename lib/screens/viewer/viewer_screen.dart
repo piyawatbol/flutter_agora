@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import 'package:flutter_agora_app/controllers/viewer/viewer_controller.dart';
+import 'package:flutter_agora_app/widgets/chat/chat_box.dart';
 import 'package:flutter_agora_app/widgets/text/auto_text.dart';
-import 'package:flutter_agora_app/widgets/textfeild/textfeild_custom.dart';
 import 'package:get/get.dart';
 
 class ViewerScreen extends StatefulWidget {
@@ -62,8 +62,10 @@ class _ViewerScreenState extends State<ViewerScreen> {
                       ),
                     )
                   },
-                  BuildChat(size),
-                  buildTextfeild(),
+                  ChatBox(
+                    messages: controller.messages,
+                  ),
+                  buildTextfeild(controller),
                   buildAppBar()
                 ],
               );
@@ -74,82 +76,53 @@ class _ViewerScreenState extends State<ViewerScreen> {
     );
   }
 
-  Widget BuildChat(Size size) {
+  Widget buildTextfeild(ViewerController controller) {
     return Positioned(
-      bottom: size.height * 0.09,
-      child: Container(
-          padding: EdgeInsets.all(10),
-          height: size.height * 0.4,
-          width: size.width,
-          // color: Colors.red,
-          child: ListView.builder(
-            itemCount: 20,
-            itemBuilder: (BuildContext context, int index) {
-              return Container(
-                padding: EdgeInsets.symmetric(vertical: 10),
-                child: Row(
-                  children: [
-                    CircleAvatar(
-                      radius: 25,
-                    ),
-                    SizedBox(width: 10),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        AutoText(
-                          "pyayut chanosha",
-                          fontWeight: FontWeight.w500,
-                        ),
-                        AutoText("hello", color: Colors.grey.shade800),
-                      ],
-                    )
-                  ],
-                ),
-              );
-            },
-          )),
-    );
-  }
-
-  Widget buildTextfeild() {
-    return Positioned(
-        bottom: 25,
-        right: 0,
-        left: 0,
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20),
-          child: TextField(
-            cursorHeight: 15,
-            decoration: InputDecoration(
-                contentPadding: EdgeInsets.only(left: 20),
-                filled: true,
-                fillColor: Colors.white,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                  borderSide: BorderSide(
-                    color: Colors.grey.shade400,
-                    width: 2,
-                  ),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                  borderSide: BorderSide(
-                    color: Colors.grey.shade500,
-                    width: 2,
-                  ),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                  borderSide: BorderSide(
-                    color: Colors.grey.shade400,
-                    width: 2,
-                  ),
-                ),
-                hintText: 'Enten Comment',
-                hintStyle: TextStyle(fontSize: 14),
-                suffixIcon: Icon(Icons.send)),
+      bottom: 25,
+      right: 0,
+      left: 0,
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 20),
+        child: TextField(
+          controller: controller.messageController,
+          // cursorHeight: 15,
+          decoration: InputDecoration(
+            contentPadding: EdgeInsets.only(left: 20),
+            filled: true,
+            fillColor: Colors.white,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10.0),
+              borderSide: BorderSide(
+                color: Colors.grey.shade400,
+                width: 2,
+              ),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10.0),
+              borderSide: BorderSide(
+                color: Colors.grey.shade500,
+                width: 2,
+              ),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10.0),
+              borderSide: BorderSide(
+                color: Colors.grey.shade400,
+                width: 2,
+              ),
+            ),
+            hintText: 'Enten Comment',
+            hintStyle: TextStyle(fontSize: 14),
+            suffixIcon: IconButton(
+              onPressed: () {
+                controller.sendMessage();
+              },
+              icon: Icon(Icons.send),
+            ),
           ),
-        ));
+        ),
+      ),
+    );
   }
 
   Widget buildAppBar() {

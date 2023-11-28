@@ -4,16 +4,20 @@ import 'package:agora_uikit/agora_uikit.dart';
 import 'package:camera/camera.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_agora_app/controllers/scroll/scroll_controller.dart';
+import 'package:flutter_agora_app/models/chat/chat_model.dart';
 import 'package:flutter_agora_app/widgets/log_custom/log_custom.dart';
 import 'package:flutter_agora_app/widgets/toast/toast_custom.dart';
 import 'package:get/get.dart' hide FormData, MultipartFile;
 import 'package:image_picker/image_picker.dart';
 import '../../configs/appId.dart';
+import '../../configs/ipcon.dart';
 import '../../models/channel/channel_model.dart';
 import '../../models/users/userData.dart';
 import '../../screens/broadcaster/live_screen.dart';
 import '../../screens/broadcaster/prelive_screen.dart';
 import '../../services/apis/live/live_api.dart';
+import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 class LiveController extends GetxController {
   TextEditingController channelName = TextEditingController();
@@ -31,10 +35,14 @@ class LiveController extends GetxController {
   int count = 3;
   int direction = 1;
   bool start = false;
+  late IO.Socket socket;
+  List<ChatModel> messages = [];
+  ChatController chatController = Get.put(ChatController());
 
   @override
   void onInit() {
     getChannel();
+    initSocket();
     super.onInit();
   }
 
@@ -204,5 +212,26 @@ class LiveController extends GetxController {
         }
       }
     });
+  }
+
+  initSocket() {
+    socket = IO.io('$ipcon', <String, dynamic>{
+      'transports': ['websocket'],
+      'autoConnect': true,
+    });
+
+    socket.connect();
+
+    socket.onConnect((_) {
+      print('Connected');
+    });
+
+    socket.on('message_from_server', (data) {
+      messages.add(ChatModel.fromJson(data));
+      chatController.scrollToBottom();
+      update();
+    });
+
+    socket.onDisconnect((_) => print('Disconnected'));
   }
 }

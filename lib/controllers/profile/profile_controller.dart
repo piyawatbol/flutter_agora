@@ -16,8 +16,10 @@ class ProfileController extends GetxController {
 
   getProfile() async {
     final response = await ProfileApi.getProfile();
-    UserData.user = UserModel.fromJson(response['data']['data']);
-    update();
+    if (response['message'] == "Success") {
+      UserData.user = UserModel.fromJson(response['data']['data']);
+      update();
+    }
   }
 
   signOut() async {

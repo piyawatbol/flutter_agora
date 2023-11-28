@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_agora_app/screens/splash/splash_screen.dart';
+
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
