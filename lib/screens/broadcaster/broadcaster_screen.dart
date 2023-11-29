@@ -3,13 +3,12 @@ import 'package:flutter_agora_app/configs/ipcon.dart';
 import 'package:flutter_agora_app/controllers/live/live_controller.dart';
 import 'package:flutter_agora_app/controllers/profile/profile_controller.dart';
 import 'package:flutter_agora_app/models/channel/channel_model.dart';
+import 'package:flutter_agora_app/models/users/userData.dart';
 import 'package:flutter_agora_app/routes/routes.dart';
-import 'package:flutter_agora_app/screens/broadcaster/prelive_screen.dart';
+import 'package:flutter_agora_app/screens/broadcaster/live_screen.dart';
 import 'package:flutter_agora_app/widgets/text/auto_text.dart';
 import 'package:get/get.dart';
-
 import '../../widgets/colors/color.dart';
-import '../../widgets/drawer/drawer_home.dart';
 
 class BroadcaterScreen extends StatelessWidget {
   BroadcaterScreen({super.key});
@@ -23,6 +22,11 @@ class BroadcaterScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Color(0xfff9f9f9),
       appBar: AppBar(
+        leading: IconButton(
+            onPressed: () {
+              Get.toNamed(AppRoutes.profile);
+            },
+            icon: Icon(Icons.person)),
         iconTheme: IconThemeData(color: Colors.black),
         backgroundColor: Color(0xfff9f9f9),
         elevation: 0,
@@ -35,7 +39,8 @@ class BroadcaterScreen extends StatelessWidget {
               icon: Icon(Icons.add))
         ],
       ),
-      drawer: DrawerHome(),
+      // drawer: DrawerHome(),
+
       body: GetBuilder<LiveController>(
         init: LiveController(),
         builder: (controller) {
@@ -62,8 +67,9 @@ class BroadcaterScreen extends StatelessWidget {
           return GestureDetector(
             onTap: () {
               controller.channel = channel;
-              Get.to(() =>
-                  PreLiveScreen(channel_name: channel.channelName.toString()));
+              Get.to(() => LiveScreen(
+                  channel: channel.channelName.toString(),
+                  uid: int.parse(UserData.user!.uid.toString())));
             },
             child: Container(
                 margin: EdgeInsets.symmetric(horizontal: 10),

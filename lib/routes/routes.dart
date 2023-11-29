@@ -1,4 +1,5 @@
 import 'package:flutter_agora_app/screens/broadcaster/broadcaster_screen.dart';
+import 'package:flutter_agora_app/screens/profile/profile_screen.dart';
 
 import 'package:flutter_agora_app/screens/viewer/home_viewer_screen.dart';
 import 'package:flutter_agora_app/screens/register/register_screen.dart';
@@ -15,6 +16,7 @@ class AppRoutes {
   static final register = '/regsiter';
   static final broadcaster = '/broadcaster';
   static final add_live = '/add_live';
+  static final profile = '/profile';
 
   static final getPages = [
     GetPage(name: splash, page: () => SplachScreen()),
@@ -23,5 +25,6 @@ class AppRoutes {
     GetPage(name: register, page: () => RegisterScreen()),
     GetPage(name: broadcaster, page: () => BroadcaterScreen()),
     GetPage(name: add_live, page: () => AddLiveScreen()),
+    GetPage(name: profile, page: () => ProfileScreen()),
   ];
 }

@@ -10,7 +10,10 @@ import '../../widgets/text/auto_text.dart';
 class LiveScreen extends StatefulWidget {
   final int uid;
   final String channel;
-  const LiveScreen({required this.uid, required this.channel});
+  const LiveScreen({
+    required this.uid,
+    required this.channel,
+  });
 
   @override
   State<LiveScreen> createState() => _LiveScreenState();
@@ -32,6 +35,7 @@ class _LiveScreenState extends State<LiveScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var size = MediaQuery.of(context).size;
     return Scaffold(
         body: GetBuilder<LiveController>(
       init: LiveController(),
@@ -50,16 +54,13 @@ class _LiveScreenState extends State<LiveScreen> {
                     : const CircularProgressIndicator(),
               ),
             ),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                ChatBox(messages: controller.messages),
-                AgoraVideoButtons(
-                  client: controller.client,
-                ),
-              ],
+            AgoraVideoButtons(
+              client: controller.client,
             ),
-            buildAppBar()
+            buildAppBar(),
+            Positioned(
+                bottom: size.height * 0.2,
+                child: ChatBox(messages: controller.messages)),
           ],
         );
       },

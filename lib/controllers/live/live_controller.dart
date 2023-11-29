@@ -15,7 +15,6 @@ import '../../configs/ipcon.dart';
 import '../../models/channel/channel_model.dart';
 import '../../models/users/userData.dart';
 import '../../screens/broadcaster/live_screen.dart';
-import '../../screens/broadcaster/prelive_screen.dart';
 import '../../services/apis/live/live_api.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
@@ -147,7 +146,11 @@ class LiveController extends GetxController {
         channel = ChannelModel.fromJson(response['data']);
         statusLoading = false;
         update();
-        Get.off(() => PreLiveScreen(channel_name: channelName.text));
+        Get.off(() => LiveScreen(
+            uid: int.parse(
+              UserData.user!.uid.toString(),
+            ),
+            channel: channelName.text));
       } else {
         statusLoading = false;
         update();

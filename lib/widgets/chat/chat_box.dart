@@ -29,7 +29,7 @@ class ChatBox extends StatelessWidget {
                   itemCount: messages.length,
                   itemBuilder: (BuildContext context, int index) {
                     return Container(
-                      margin: EdgeInsets.symmetric(vertical: 5),
+                      margin: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10),
                         color: Colors.white,
@@ -38,7 +38,7 @@ class ChatBox extends StatelessWidget {
                             color: Colors.grey.withOpacity(0.3),
                             blurRadius: 4,
                             spreadRadius: 0.5,
-                            offset: Offset(1, 0),
+                            offset: Offset(2, 2),
                           )
                         ],
                       ),
